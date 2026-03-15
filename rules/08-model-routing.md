@@ -31,7 +31,7 @@ For clear-cut routing decisions, dispatch immediately and log:
 ## Routing Table
 
 | Complexity | Model | Cost | Use for |
-|------------|-------|------|---------|
+|------------|-------|------|--------|
 | SIMPLE | haiku | 1x | Search, grep, glob, format, boilerplate, docs |
 | MEDIUM | sonnet | 12x | Code review, refactor, bug fix, tests, analysis |
 | COMPLEX | opus | 60x | Architecture, deep debug, security, ambiguous requirements |
@@ -48,9 +48,10 @@ Auto-dispatch to Gemini when the request matches frontend patterns:
 ## Dispatch Methods
 
 - Haiku/Sonnet/Opus: Agent tool with `model: "haiku"` / `model: "sonnet"` / `model: "opus"`
-- Gemini: `timeout 180 gemini -m gemini-3.1-pro-preview --sandbox false -p "..."`
-- Gemini timeout/fail → fallback to Opus
-- Opus reviews ALL Gemini output before applying — never apply unvalidated
+- Gemini: real tmux worker via `/design` command (splits pane, Gemini edits files directly)
+- Models: gemini-3.1-pro-preview (primary) → gemini-3-flash-preview (fallback) → Opus (last resort)
+- Gemini requires active tmux session — if not in tmux, fall back to Opus
+- Opus reviews ALL Gemini changes via `git diff` before keeping — never apply unvalidated
 
 ## Anti-Collision (parallel agents)
 

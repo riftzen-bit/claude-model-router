@@ -1,0 +1,32 @@
+#!/bin/bash
+# claude-tmux: Launch claude inside tmux for /design (Gemini worker) support
+# Install to ~/.local/bin/claude-tmux and alias claude='claude-tmux'
+# Usage: claude-tmux [any claude args...]
+
+SESSION_NAME="${CLAUDE_TMUX_SESSION:-Work}"
+CLAUDE_BIN="$(command -v claude)"
+
+if [ -z "$CLAUDE_BIN" ]; then
+  echo "Error: claude not found in PATH"
+  exit 1
+fi
+
+# Already inside tmux? Just run claude directly
+if [ -n "$TMUX" ]; then
+  exec "$CLAUDE_BIN" --dangerously-skip-permissions "$@"
+fi
+
+# Not in tmux — attach to existing or create new, then run claude
+# Use printf %q to safely quote arguments
+QUOTED_ARGS=""
+for arg in "$@"; do
+  QUOTED_ARGS="$QUOTED_ARGS $(printf '%q' "$arg")"
+done
+
+if tmux has-session -t "$SESSION_NAME" 2>/dev/null; then
+  exec tmux new-window -t "$SESSION_NAME" -n claude \
+    "$CLAUDE_BIN --dangerously-skip-permissions $QUOTED_ARGS; exec bash"
+else
+  exec tmux new-session -s "$SESSION_NAME" -n claude \
+    "$CLAUDE_BIN --dangerously-skip-permissions $QUOTED_ARGS; exec bash"
+fi

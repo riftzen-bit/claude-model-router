@@ -9,13 +9,12 @@ BEFORE launching this subagent, verify:
    - SIMPLE tasks → model: "haiku"
    - MEDIUM tasks → model: "sonnet"
    - COMPLEX tasks → model: "opus"
-   - FRONTEND tasks → use Bash with `timeout 180 gemini --sandbox false` instead (not Agent tool)
-   - Use /design command for frontend tasks with full project context
+   - FRONTEND tasks → use /design command (real tmux Gemini worker, NOT Bash timeout)
 
 2. ROUTING APPROVAL:
    - Clear-cut tasks (search, code review, security scan): auto-dispatch OK, log with [Route]
    - Ambiguous tasks or Opus subagent: ask user before dispatching
-   - Frontend/UI tasks: use Gemini CLI dispatch, not Agent tool
+   - Frontend/UI tasks: /design dispatches Gemini as tmux worker with filesystem access
 
 3. COLLISION CHECK: Does this agent's file set overlap with any other parallel agent?
    - If YES: do NOT dispatch in parallel. Run sequentially.

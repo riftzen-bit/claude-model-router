@@ -21,7 +21,7 @@ Read the user's message and identify:
 For each subtask, assign a complexity tier:
 
 | Tier | Model | Cost | Use for |
-|------|-------|------|---------|
+|------|-------|------|--------|
 | SIMPLE | haiku | $0.25/$1.25 per M tokens | File search, grep, glob, formatting, boilerplate, docs, simple Q&A, rename/move |
 | MEDIUM | sonnet | $3/$15 per M tokens | Code review, refactor, bug fix (clear scope), test writing, summarization, data transform |
 | COMPLEX | opus | $15/$75 per M tokens | Architecture, complex debug, multi-file reasoning, security, ambiguous requirements, planning |
@@ -69,20 +69,19 @@ Agent tool call:
 ```
 
 **For Gemini (frontend tasks):**
-```
-Bash tool call:
-  command: timeout 180 gemini -m gemini-3.1-pro-preview --sandbox false -p "[prompt with full context]"
-```
+Use the `/design` command — it spawns a real Gemini tmux worker with filesystem access.
+Gemini edits files directly, Opus validates via `git diff` before keeping changes.
 
-Prefer using `/design` command for frontend tasks — it includes project context gathering, anti-slop enforcement, and Opus validation automatically.
+Do NOT use `timeout` + Bash for Gemini — that's the old approach. `/design` handles everything:
+project context gathering, anti-slop enforcement, git safety net, tmux worker, and Opus validation.
 
 Rules:
 - Independent subtasks with no file overlap: dispatch ALL in a single message (parallel)
 - Overlapping subtasks: dispatch in sequential batches
 - Include all necessary context in the prompt — subagents have NO access to conversation history
 - For file-related tasks: include exact file paths and current file contents in the prompt
-- For Gemini: use `--sandbox false` for filesystem access, include design context and existing styles
-- Opus reviews ALL Gemini output before applying — never apply unvalidated
+- For Gemini: use `/design` command (tmux worker with `--sandbox false` filesystem access)
+- Opus reviews ALL Gemini file changes via `git diff` before keeping — never apply unvalidated
 
 ## Step 5: Aggregate Results
 

@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Skip when running from TeleClaude bot sessions (they don't need routing prompts)
+[ "$TELECLAUDE" = "1" ] && exit 0
+
 cat <<'EOF'
 <user-prompt-submit-hook>
 Start EVERY reply with: [HOOK_ON]

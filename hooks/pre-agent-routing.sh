@@ -1,6 +1,9 @@
 #!/bin/bash
 # PreToolUse hook for Agent tool — routing guard + collision check
 
+# Skip when running from TeleClaude bot sessions
+[ "$TELECLAUDE" = "1" ] && exit 0
+
 cat <<'EOF'
 <routing-guard>
 BEFORE launching this subagent, verify:

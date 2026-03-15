@@ -68,7 +68,7 @@ User: "yes"
 - Worktree isolation — each agent works on an isolated repo copy
 - Sequential fallback — overlapping tasks run one after another
 
-**You stay in control** — Opus always asks before dispatching. Say "yes" to route, "no" to handle everything with Opus.
+**Smart dispatching** — clear-cut tasks (search, code review) auto-dispatch instantly. Ambiguous or expensive tasks ask for confirmation first.
 
 ## Quick Install
 

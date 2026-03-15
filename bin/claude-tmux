@@ -16,17 +16,21 @@ if [ -n "$TMUX" ]; then
   exec "$CLAUDE_BIN" --dangerously-skip-permissions "$@"
 fi
 
-# Not in tmux — attach to existing or create new, then run claude
+# Not in tmux — create detached session/window, then attach
 # Use printf %q to safely quote arguments
 QUOTED_ARGS=""
 for arg in "$@"; do
   QUOTED_ARGS="$QUOTED_ARGS $(printf '%q' "$arg")"
 done
 
+CMD="$CLAUDE_BIN --dangerously-skip-permissions $QUOTED_ARGS; exec bash"
+
 if tmux has-session -t "$SESSION_NAME" 2>/dev/null; then
-  exec tmux new-window -t "$SESSION_NAME" -n claude \
-    "$CLAUDE_BIN --dangerously-skip-permissions $QUOTED_ARGS; exec bash"
+  # Session exists — add a new window, then attach
+  tmux new-window -t "$SESSION_NAME" -n claude "$CMD"
+  exec tmux attach-session -t "$SESSION_NAME"
 else
-  exec tmux new-session -s "$SESSION_NAME" -n claude \
-    "$CLAUDE_BIN --dangerously-skip-permissions $QUOTED_ARGS; exec bash"
+  # No session — create detached, then attach (2-step avoids silent failure)
+  tmux new-session -d -s "$SESSION_NAME" -n claude "$CMD"
+  exec tmux attach-session -t "$SESSION_NAME"
 fi

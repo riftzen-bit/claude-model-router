@@ -91,6 +91,7 @@ Then start a new Claude Code session. The router activates automatically.
 │   └── pre-agent-routing.sh            ← Guards against unauthorized dispatch
 └── commands/
     ├── route.md                        ← /route — full orchestrator
+    ├── design.md                       ← /design — Gemini design dispatch
     └── routing-stats.md                ← /routing-stats — cost dashboard
 ```
 
@@ -99,6 +100,7 @@ Then start a new Claude Code session. The router activates automatically.
 | Command | What it does |
 |---------|-------------|
 | `/route` | Invoke the full orchestrator for complex multi-step tasks |
+| `/design` | Dispatch frontend/UI tasks to Gemini with project context and anti-slop rules |
 | `/routing-stats` | View routing statistics and cost savings for your session |
 
 ## Manual Installation
@@ -112,6 +114,7 @@ cp model-routing.json ~/.claude/
 cp hooks/routing-reminder.sh ~/.claude/hooks/
 cp hooks/pre-agent-routing.sh ~/.claude/hooks/
 cp commands/route.md ~/.claude/commands/
+cp commands/design.md ~/.claude/commands/
 cp commands/routing-stats.md ~/.claude/commands/
 chmod +x ~/.claude/hooks/routing-reminder.sh ~/.claude/hooks/pre-agent-routing.sh
 ```
@@ -171,6 +174,7 @@ I need you to install the claude-model-router plugin. Follow these steps EXACTLY
    cp /tmp/claude-model-router/hooks/routing-reminder.sh ~/.claude/hooks/routing-reminder.sh
    cp /tmp/claude-model-router/hooks/pre-agent-routing.sh ~/.claude/hooks/pre-agent-routing.sh
    cp /tmp/claude-model-router/commands/route.md ~/.claude/commands/route.md
+   cp /tmp/claude-model-router/commands/design.md ~/.claude/commands/design.md
    cp /tmp/claude-model-router/commands/routing-stats.md ~/.claude/commands/routing-stats.md
 
 4. Make hooks executable:
@@ -205,6 +209,37 @@ IMPORTANT:
 ```
 
 </details>
+
+## Gemini Design Dispatch (v2.1)
+
+Frontend tasks are automatically detected and routed to Gemini 3.1 Pro with `--sandbox false`:
+
+```
+User: "redesign the dashboard with a dark theme"
+
+  [Design] dashboard redesign → gemini (frontend auto-detected)
+
+  ┌──────────────────────────────────┐
+  │  Gemini 3.1 Pro (--sandbox off)  │
+  │  • Reads project styles/tokens   │
+  │  • Generates with anti-slop rules│
+  │  • 180s timeout                  │
+  └──────────┬───────────────────────┘
+             ▼
+  ┌──────────────────────────────────┐
+  │  Opus validates before applying  │
+  │  • Syntax check                  │
+  │  • Anti-slop check               │
+  │  • Accessibility (WCAG 2.1 AA)   │
+  │  • Framework match               │
+  └──────────────────────────────────┘
+```
+
+**Auto-detected keywords:** design, redesign, style, UI, layout, CSS, Tailwind, animation, theme, color, typography, font, landing page, responsive
+
+**Anti-slop rules enforced:** No Inter/Roboto fonts, no purple gradients, no generic layouts, no AI-looking patterns. Distinctive, characterful design only.
+
+**Fallback:** If Gemini CLI is not installed, frontend tasks automatically fallback to Opus.
 
 ## Gemini Integration (Optional)
 

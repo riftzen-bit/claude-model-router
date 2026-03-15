@@ -37,12 +37,20 @@ For clear-cut routing decisions, dispatch immediately and log:
 | COMPLEX | opus | 60x | Architecture, deep debug, security, ambiguous requirements |
 | FRONTEND | gemini | ext | UI design, CSS, visual layout, animations |
 
+## Frontend Auto-Detection
+
+Auto-dispatch to Gemini when the request matches frontend patterns:
+- Keywords: design, redesign, style, styling, UI, layout, CSS, Tailwind, animation, theme, color, typography, font, landing page, component visual, responsive
+- File types: .tsx/.jsx components, .css/.scss, tailwind.config.*, HTML templates
+- Use `/design` command for explicit Gemini dispatch with full project context
+- Gemini runs with `--sandbox false` for filesystem access
+
 ## Dispatch Methods
 
 - Haiku/Sonnet/Opus: Agent tool with `model: "haiku"` / `model: "sonnet"` / `model: "opus"`
-- Gemini: `timeout 120 gemini -m gemini-3.1-pro-preview --sandbox false -p "..."`
+- Gemini: `timeout 180 gemini -m gemini-3.1-pro-preview --sandbox false -p "..."`
 - Gemini timeout/fail → fallback to Opus
-- Opus reviews ALL subagent output before applying
+- Opus reviews ALL Gemini output before applying — never apply unvalidated
 
 ## Anti-Collision (parallel agents)
 
@@ -72,4 +80,5 @@ No overlap. Auto-dispatching.
 ## Commands
 
 - `/route` — full orchestrator for complex multi-step tasks
+- `/design` — dispatch frontend/UI tasks to Gemini with project context
 - `/routing-stats` — cost dashboard for current session

@@ -1,7 +1,7 @@
 {
   "$schema": "Model routing configuration for Claude Code",
-  "version": "2.0.0",
-  "description": "Defines task-to-model mapping with anti-collision and Gemini support. Opus (leader) uses this to route subtasks.",
+  "version": "2.1.0",
+  "description": "Defines task-to-model mapping with anti-collision, Gemini design dispatch, and smart routing. Opus (leader) uses this to route subtasks.",
 
   "models": {
     "haiku": {
@@ -33,9 +33,13 @@
       "provider": "google",
       "cost_tier": 2,
       "dispatch": "cli",
-      "cli_command": "gemini -m gemini-3.1-pro-preview",
-      "strengths": ["frontend-design", "ui-components", "css", "visual-layout", "animations"],
-      "weaknesses": ["backend-logic", "system-architecture"]
+      "cli_command": "gemini -m gemini-3.1-pro-preview --sandbox false",
+      "timeout": 180,
+      "strengths": ["frontend-design", "ui-components", "css", "visual-layout", "animations", "responsive-design", "color-theory"],
+      "weaknesses": ["backend-logic", "system-architecture"],
+      "auto_detect_keywords": ["design", "redesign", "style", "styling", "UI", "UX", "layout", "CSS", "Tailwind", "animation", "theme", "color", "typography", "font", "landing page", "component visual", "responsive"],
+      "require_opus_review": true,
+      "design_command": "/design"
     }
   },
 
@@ -90,9 +94,11 @@
     },
     {
       "task_pattern": "frontend_design",
-      "description": "UI component design, styling, CSS, visual layout, animations",
+      "description": "UI component design, styling, CSS, visual layout, animations, theming, typography",
       "model": "gemini",
-      "examples": ["design login page", "style this component", "add animations", "responsive layout", "create landing page"]
+      "dispatch_method": "cli_no_sandbox",
+      "auto_detect": true,
+      "examples": ["design login page", "style this component", "add animations", "responsive layout", "create landing page", "redesign the navbar", "update color scheme", "add dark mode", "make it look modern"]
     },
     {
       "task_pattern": "architecture",

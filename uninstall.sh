@@ -14,6 +14,7 @@ rm -f "$CLAUDE_DIR/model-routing.json"
 rm -f "$CLAUDE_DIR/hooks/routing-reminder.sh"
 rm -f "$CLAUDE_DIR/hooks/pre-agent-routing.sh"
 rm -f "$CLAUDE_DIR/commands/route.md"
+rm -f "$CLAUDE_DIR/commands/design.md"
 rm -f "$CLAUDE_DIR/commands/routing-stats.md"
 
 echo "  Files removed."

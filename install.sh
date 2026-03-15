@@ -28,22 +28,31 @@ fi
 mkdir -p "$RULES_DIR" "$HOOKS_DIR" "$COMMANDS_DIR"
 
 # Copy files
-echo "  [1/5] Installing routing rule..."
+echo "  [1/6] Installing routing rule..."
 cp "$SCRIPT_DIR/rules/08-model-routing.md" "$RULES_DIR/08-model-routing.md"
 
-echo "  [2/5] Installing model config..."
+echo "  [2/6] Installing model config..."
 cp "$SCRIPT_DIR/model-routing.json" "$CLAUDE_DIR/model-routing.json"
 
-echo "  [3/5] Installing hooks..."
+echo "  [3/6] Installing hooks..."
 cp "$SCRIPT_DIR/hooks/routing-reminder.sh" "$HOOKS_DIR/routing-reminder.sh"
 cp "$SCRIPT_DIR/hooks/pre-agent-routing.sh" "$HOOKS_DIR/pre-agent-routing.sh"
 chmod +x "$HOOKS_DIR/routing-reminder.sh" "$HOOKS_DIR/pre-agent-routing.sh"
 
-echo "  [4/5] Installing commands..."
+echo "  [4/6] Installing commands..."
 cp "$SCRIPT_DIR/commands/route.md" "$COMMANDS_DIR/route.md"
 cp "$SCRIPT_DIR/commands/routing-stats.md" "$COMMANDS_DIR/routing-stats.md"
+cp "$SCRIPT_DIR/commands/design.md" "$COMMANDS_DIR/design.md"
 
-echo "  [5/5] Registering hooks in settings.json..."
+echo "  [5/6] Checking Gemini CLI..."
+if command -v gemini &>/dev/null; then
+  echo "  Gemini CLI found — frontend design routing enabled"
+else
+  echo "  Gemini CLI not found — frontend tasks will fallback to Opus"
+  echo "  Install later: npm install -g @google/gemini-cli"
+fi
+
+echo "  [6/6] Registering hooks in settings.json..."
 
 # Register hooks using python (safe JSON manipulation)
 if command -v python3 &>/dev/null; then
@@ -116,10 +125,12 @@ echo "    $CLAUDE_DIR/model-routing.json"
 echo "    $HOOKS_DIR/routing-reminder.sh"
 echo "    $HOOKS_DIR/pre-agent-routing.sh"
 echo "    $COMMANDS_DIR/route.md"
+echo "    $COMMANDS_DIR/design.md"
 echo "    $COMMANDS_DIR/routing-stats.md"
 echo ""
 echo "  Commands available:"
 echo "    /route          — orchestrate multi-model task routing"
+echo "    /design         — dispatch frontend/UI tasks to Gemini"
 echo "    /routing-stats  — view cost savings dashboard"
 echo ""
 echo "  Start a new Claude Code session to activate."

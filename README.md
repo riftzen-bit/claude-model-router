@@ -107,8 +107,9 @@ Then start a new Claude Code session. The router activates automatically.
 
 If you prefer to install manually:
 
-**Step 1** — Copy files:
+**Step 1** — Copy files (from inside the cloned repo):
 ```bash
+cd claude-model-router
 cp rules/08-model-routing.md ~/.claude/rules/common/
 cp model-routing.json ~/.claude/
 cp hooks/routing-reminder.sh ~/.claude/hooks/

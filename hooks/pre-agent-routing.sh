@@ -3,25 +3,28 @@
 
 cat <<'EOF'
 <routing-guard>
-BEFORE launching this subagent, verify ALL of the following:
+BEFORE launching this subagent, verify:
 
-1. ROUTING APPROVAL: Did the user explicitly confirm the routing plan?
-   - If NO: STOP. Present routing plan table first and wait for confirmation.
-
-2. MODEL ASSIGNMENT: Is the model parameter correct?
+1. MODEL ASSIGNMENT: Is the model parameter correct?
    - SIMPLE tasks → model: "haiku"
    - MEDIUM tasks → model: "sonnet"
    - COMPLEX tasks → model: "opus"
-   - FRONTEND tasks → use Bash with gemini CLI instead (not Agent tool)
+   - FRONTEND tasks → use Bash with `timeout 180 gemini --sandbox false` instead (not Agent tool)
+   - Use /design command for frontend tasks with full project context
+
+2. ROUTING APPROVAL:
+   - Clear-cut tasks (search, code review, security scan): auto-dispatch OK, log with [Route]
+   - Ambiguous tasks or Opus subagent: ask user before dispatching
+   - Frontend/UI tasks: use Gemini CLI dispatch, not Agent tool
 
 3. COLLISION CHECK: Does this agent's file set overlap with any other parallel agent?
-   - If YES: do NOT dispatch in parallel. Run sequentially after the conflicting agent completes.
-   - If NO: safe to dispatch in parallel.
+   - If YES: do NOT dispatch in parallel. Run sequentially.
+   - If NO: safe to parallel dispatch.
 
 4. ISOLATION: Is isolation: "worktree" set for parallel dispatches?
    - All parallel agents MUST use worktree isolation.
    - Solo agents (no parallel peers) may skip worktree.
 
-Opus 4.6 is ALWAYS the leader. Never delegate without user approval.
+Opus 4.6 is ALWAYS the leader.
 </routing-guard>
 EOF

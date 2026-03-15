@@ -40,7 +40,7 @@ For clear-cut routing decisions, dispatch immediately and log:
 ## Frontend Auto-Detection
 
 Auto-dispatch to Gemini when the request matches frontend patterns:
-- Keywords: design, redesign, style, styling, UI, layout, CSS, Tailwind, animation, theme, color, typography, font, landing page, component visual, responsive
+- Keywords: design, redesign, style, styling, UI, UX, layout, CSS, Tailwind, animation, theme, color, typography, font, landing page, component visual, responsive
 - File types: .tsx/.jsx components, .css/.scss, tailwind.config.*, HTML templates
 - Use `/design` command for explicit Gemini dispatch with full project context
 - Gemini runs with `--sandbox false` for filesystem access

@@ -71,16 +71,18 @@ Agent tool call:
 **For Gemini (frontend tasks):**
 ```
 Bash tool call:
-  command: gemini -m gemini-3.1-pro-preview -p "[prompt with full context including file contents]"
+  command: timeout 180 gemini -m gemini-3.1-pro-preview --sandbox false -p "[prompt with full context]"
 ```
+
+Prefer using `/design` command for frontend tasks — it includes project context gathering, anti-slop enforcement, and Opus validation automatically.
 
 Rules:
 - Independent subtasks with no file overlap: dispatch ALL in a single message (parallel)
 - Overlapping subtasks: dispatch in sequential batches
 - Include all necessary context in the prompt — subagents have NO access to conversation history
 - For file-related tasks: include exact file paths and current file contents in the prompt
-- For Gemini: include design context, existing styles, and component requirements
-- Opus reviews ALL Gemini output before applying changes
+- For Gemini: use `--sandbox false` for filesystem access, include design context and existing styles
+- Opus reviews ALL Gemini output before applying — never apply unvalidated
 
 ## Step 5: Aggregate Results
 
